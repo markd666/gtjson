@@ -7,11 +7,12 @@ import (
 	"net"
 )
 
-// GTTelemetry Ground Truth Telemetry data structure
+// GTTelemetry Ground Truth Telemetry data structure. This will be converted into JSON format and sent via
+// TCP to the 'core'
 type GTTelemetry struct {
-	PositionMeters [3]float64
-	Quaterion      [4]float64
-	Timestamp      float64
+	PositionMeters [3]float64 // [0] = x | [1] = y | [2] = z
+	Quaterion      [4]float64 // [0] = w | [1] = x | [2] = y | [3] = z
+	Timestamp      int32      // Unix Epoch time in milliseconds
 }
 
 type clientConnectionData struct {
@@ -40,7 +41,7 @@ func CoreClient() CoreClientInterface {
 	return &clientConnectionData{defaultIPAddress, defaultPort, false, nil}
 }
 
-// Connect creates a TCP server and waits for a client to connect
+// Connect creates a TCP server and blocks untilwaits for a client to connect
 func (core *clientConnectionData) Connect() error {
 	serverAddress := fmt.Sprintf("%v:%v", core.ipAddress, core.port)
 	log.Printf("Starting TCP Server with address: %v", serverAddress)
