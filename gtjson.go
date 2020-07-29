@@ -7,10 +7,11 @@ import (
 	"net"
 )
 
-type gtTelemetry struct {
-	positionMetres [3]float64
-	quaterion      [4]float64
-	timestamp      float64
+// GTTelemetry Ground Truth Telemetry data structure
+type GTTelemetry struct {
+	PositionMeters [3]float64
+	Quaterion      [4]float64
+	Timestamp      float64
 }
 
 type clientConnectionData struct {
@@ -23,10 +24,14 @@ type clientConnectionData struct {
 // CoreClientInterface is an interface to the telemetry stream
 type CoreClientInterface interface {
 	Connect() error
+	SendTmToCore(telemety GTTelemetry)
+	GetPortNumber() int
+	GetIPAddress() string
+	IsConnected() bool
 }
 
-const (
-	defaultIPAddress = "192.168.0.100"
+var (
+	defaultIPAddress = "127.0.0.1"
 	defaultPort      = 8899
 )
 
@@ -35,8 +40,10 @@ func CoreClient() CoreClientInterface {
 	return &clientConnectionData{defaultIPAddress, defaultPort, false, nil}
 }
 
+// Connect creates a TCP server and waits for a client to connect
 func (core *clientConnectionData) Connect() error {
 	serverAddress := fmt.Sprintf("%v:%v", core.ipAddress, core.port)
+	log.Printf("Starting TCP Server with address: %v", serverAddress)
 	l, err := net.Listen("tcp", serverAddress)
 	if err != nil {
 		fmt.Println(err)
@@ -50,15 +57,39 @@ func (core *clientConnectionData) Connect() error {
 		fmt.Println(acceptErr)
 		return acceptErr
 	}
+
+	core.isConnected = true
+
 	return nil
 }
 
-func (core *clientConnectionData) SentTmToCore(telemetry gtTelemetry) {
+// SendTmToCore
+func (core *clientConnectionData) SendTmToCore(telemetry GTTelemetry) {
 	// Convert gt_telemetry struct to json
-	telmetryJSON, err := json.Marshal(telemetry)
+	log.Println(telemetry)
+	response, err := json.Marshal(telemetry)
 	if err != nil {
 		log.Fatalf("Unable to Marshal Telemtry to JSON format")
 	}
 
 	// send data over tcp link
+	if core.IsConnected() == true {
+		log.Println(string(response))
+		core.conn.Write(response)
+	}
+}
+
+// GetPortNumber returns as an integer the port number that the TCP server will use
+func (core *clientConnectionData) GetPortNumber() int {
+	return core.port
+}
+
+// GetIPAddress returns as a string the IP address that the TCP server will use
+func (core *clientConnectionData) GetIPAddress() string {
+	return core.ipAddress
+}
+
+// IsConnected returns as a boolean the status of the TCP connection
+func (core *clientConnectionData) IsConnected() bool {
+	return core.isConnected
 }
