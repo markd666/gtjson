@@ -17,7 +17,7 @@ func TestConstructor(t *testing.T) {
 		t.Fatalf("Using incorrect port number")
 	}
 
-	if device.GetIPAddress() != "192.168.0.100" {
+	if device.GetIPAddress() != "127.0.0.1" {
 		t.Fatalf("Using incorrect IP address")
 	}
 
@@ -94,6 +94,14 @@ func clientConnection(t *testing.T, wg *sync.WaitGroup) {
 
 		if message.PositionMeters[0] != float64(1.1) {
 			t.Fatalf("PositionMeters[0] incorrect")
+		}
+
+		if message.PositionMeters[1] != float64(2.2) {
+			t.Fatalf("PositionMeters[1] incorrect")
+		}
+
+		if message.PositionMeters[2] != float64(3.3) {
+			t.Fatalf("PositionMeters[2] incorrect")
 		}
 
 		return
