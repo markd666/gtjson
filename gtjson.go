@@ -10,9 +10,9 @@ import (
 // GTTelemetry Ground Truth Telemetry data structure. This will be converted into JSON format and sent via
 // TCP to the 'core'
 type GTTelemetry struct {
-	PositionMeters [3]float64 // [0] = x | [1] = y | [2] = z
-	Quaterion      [4]float64 // [0] = w | [1] = x | [2] = y | [3] = z
-	Timestamp      int32      // Unix Epoch time in milliseconds
+	PositionMeters [3]float64 `json:"roverPosition"`         // [0] = x | [1] = y | [2] = z
+	Quaterion      [4]float64 `json:"roverOrientation_quat"` // [0] = w | [1] = x | [2] = y | [3] = z
+	Timestamp      int64      `json:"timeStamp_ms"`          // Unix Epoch time in milliseconds `
 }
 
 type clientConnectionData struct {
