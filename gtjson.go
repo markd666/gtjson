@@ -1,6 +1,7 @@
 package gtjson
 
 import (
+	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -67,7 +68,6 @@ func (core *clientConnectionData) Connect() error {
 // SendTmToCore
 func (core *clientConnectionData) SendTmToCore(telemetry GTTelemetry) {
 	// Convert gt_telemetry struct to json
-	log.Println(telemetry)
 	response, err := json.Marshal(telemetry)
 	if err != nil {
 		log.Fatalf("Unable to Marshal Telemtry to JSON format")
@@ -75,8 +75,11 @@ func (core *clientConnectionData) SendTmToCore(telemetry GTTelemetry) {
 
 	// send data over tcp link
 	if core.IsConnected() == true {
-		log.Println(string(response))
-		core.conn.Write(response)
+		tmHeader := make([]byte, 8)
+		binary.BigEndian.PutUint32(tmHeader[:4], uint32(13))
+		binary.BigEndian.PutUint32(tmHeader[4:8], uint32(len(response)))
+		packet := append(response[:], tmHeader[:]...)
+		core.conn.Write(packet)
 	}
 }
 

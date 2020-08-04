@@ -1,6 +1,7 @@
 package gtjson
 
 import (
+	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -82,29 +83,31 @@ func clientConnection(t *testing.T, wg *sync.WaitGroup) {
 	t.Logf("Client connected to: %v", c.RemoteAddr())
 
 	for {
+		recvBuf := make([]byte, 0, 1024)
+		tmp := make([]byte, 256)
+		n, err := c.Read(tmp)
+		if err != nil {
+			break
+		}
+		recvBuf = append(recvBuf, tmp[:n]...)
 
-		d := json.NewDecoder(c)
+		dataSize := binary.BigEndian.Uint32(recvBuf[n-4:])
+		if dataSize != 91 {
+			t.Fatalf("Incorrect data size")
+		}
+
+		dataType := binary.BigEndian.Uint32(recvBuf[n-8 : n-4])
+		if dataType != 13 {
+			t.Fatalf("Incorrect message type")
+		}
 
 		var message GTTelemetry
-		err := d.Decode(&message)
-		if err != nil {
+		error := json.Unmarshal(recvBuf[:n-8], &message)
+		if error != nil {
 
 		}
-		t.Log(message)
 
-		if message.PositionMeters[0] != float64(1.1) {
-			t.Fatalf("PositionMeters[0] incorrect")
-		}
-
-		if message.PositionMeters[1] != float64(2.2) {
-			t.Fatalf("PositionMeters[1] incorrect")
-		}
-
-		if message.PositionMeters[2] != float64(3.3) {
-			t.Fatalf("PositionMeters[2] incorrect")
-		}
-
+		fmt.Println(message)
 		return
-
 	}
 }
