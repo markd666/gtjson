@@ -84,8 +84,9 @@ func (core *clientConnectionData) SendTmToCore(telemetry GTTelemetry) {
 		//Insert the message size in bytes
 		binary.BigEndian.PutUint32(tmHeader[4:8], uint32(len(response)))
 		//Append the json message to the header
-		packet := append(response[:], tmHeader[:]...)
+		packet := append(tmHeader[:], response[:]...)
 		core.conn.Write(packet)
+
 	}
 }
 

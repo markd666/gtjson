@@ -100,20 +100,22 @@ func clientConnection(t *testing.T, wg *sync.WaitGroup) {
 		if err != nil {
 			break
 		}
+
 		recvBuf = append(recvBuf, tmp[:n]...)
 
-		dataSize := binary.BigEndian.Uint32(recvBuf[n-4:])
-		if dataSize != 91 {
+		dataType := binary.BigEndian.Uint32(recvBuf[:4])
+		if dataType != 13 {
 			t.Fatalf("Incorrect data size")
 		}
 
-		dataType := binary.BigEndian.Uint32(recvBuf[n-8 : n-4])
-		if dataType != 13 {
+		dataSize := binary.BigEndian.Uint32(recvBuf[4:8])
+		if dataSize != 91 {
 			t.Fatalf("Incorrect message type")
 		}
 
 		var message GTTelemetry
-		error := json.Unmarshal(recvBuf[:n-8], &message)
+		rawMessageBody := recvBuf[8:]
+		error := json.Unmarshal(rawMessageBody, &message)
 		if error != nil {
 
 		}
@@ -122,12 +124,11 @@ func clientConnection(t *testing.T, wg *sync.WaitGroup) {
 			t.Fatalf("Error loading golden file: %s", err)
 		}
 		want := string(content)
-		got := string(recvBuf[:n-8])
+		got := string(rawMessageBody)
 		if got != want {
 			t.Errorf("Want:\n%s\nGot:\n%s", want, got)
 		}
 
-		fmt.Println(message)
 		return
 	}
 }
