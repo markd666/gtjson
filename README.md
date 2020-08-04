@@ -8,9 +8,16 @@ Used to convert GPS ground truth data into JSON format and send to core via TCP.
 
 `go get github.com/markd666/gtjson`
 
+
 ## Example
 
 In the folder `/example` is a main.go file which shows the basic usuage of the package. 
 
 `cd example`
 `go run main.go`
+
+or
+
+`cd example`
+`go build`
+`./example.exe`
