@@ -1,1 +1,1 @@
-{"PositionMeters":[1.1,2.2,3.3],"Quaterion":[0,0,0,1],"Timestamp":1596103296}
+{"roverPosition":[1.1,2.2,3.3],"roverOrientation_quat":[0,0,0,1],"timeStamp_ms":1596103296}

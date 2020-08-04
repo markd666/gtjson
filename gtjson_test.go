@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net"
 	"sync"
@@ -22,6 +23,16 @@ func TestConstructor(t *testing.T) {
 		t.Fatalf("Using incorrect IP address")
 	}
 
+}
+
+func TestChangeIPAddress(t *testing.T) {
+	device := CoreClient()
+
+	device.SetIPAddress("192.168.0.1")
+
+	if device.GetIPAddress() != "192.168.0.1" {
+		t.Fatalf("Failed to set IP address to custom value")
+	}
 }
 
 func TestBasicClientConnection(t *testing.T) {
@@ -105,6 +116,15 @@ func clientConnection(t *testing.T, wg *sync.WaitGroup) {
 		error := json.Unmarshal(recvBuf[:n-8], &message)
 		if error != nil {
 
+		}
+		content, err := ioutil.ReadFile("data/" + "tm" + ".golden")
+		if err != nil {
+			t.Fatalf("Error loading golden file: %s", err)
+		}
+		want := string(content)
+		got := string(recvBuf[:n-8])
+		if got != want {
+			t.Errorf("Want:\n%s\nGot:\n%s", want, got)
 		}
 
 		fmt.Println(message)

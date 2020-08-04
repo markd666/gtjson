@@ -6,9 +6,10 @@ import (
 
 func main() {
 
-	//gtjson.defaultIPAddress = "127.0.0.1"
 	// create a gtjson client interface
 	clientInterface := gtjson.CoreClient()
+	//Change the default IP Address from 127.0.0.1 to 192.168.0.102
+	clientInterface.SetIPAddress("192.168.0.102")
 	clientInterface.Connect()
 
 	if clientInterface.IsConnected() == true {

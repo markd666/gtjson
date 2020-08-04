@@ -29,12 +29,14 @@ type CoreClientInterface interface {
 	SendTmToCore(telemety GTTelemetry)
 	GetPortNumber() int
 	GetIPAddress() string
+	SetIPAddress(string)
 	IsConnected() bool
 }
 
 var (
 	defaultIPAddress = "127.0.0.1"
 	defaultPort      = 8899
+	gtMessageType    = 13
 )
 
 // CoreClient returns an interface of type CoreClient
@@ -75,9 +77,13 @@ func (core *clientConnectionData) SendTmToCore(telemetry GTTelemetry) {
 
 	// send data over tcp link
 	if core.IsConnected() == true {
+		// Create a header of 8 bytes
 		tmHeader := make([]byte, 8)
-		binary.BigEndian.PutUint32(tmHeader[:4], uint32(13))
+		//Insert the message Type
+		binary.BigEndian.PutUint32(tmHeader[:4], uint32(gtMessageType))
+		//Insert the message size in bytes
 		binary.BigEndian.PutUint32(tmHeader[4:8], uint32(len(response)))
+		//Append the json message to the header
 		packet := append(response[:], tmHeader[:]...)
 		core.conn.Write(packet)
 	}
@@ -91,6 +97,11 @@ func (core *clientConnectionData) GetPortNumber() int {
 // GetIPAddress returns as a string the IP address that the TCP server will use
 func (core *clientConnectionData) GetIPAddress() string {
 	return core.ipAddress
+}
+
+// SetIPAddress Change the default address from 127.0.0.1 to user defined
+func (core *clientConnectionData) SetIPAddress(ipAddress string) {
+	core.ipAddress = ipAddress
 }
 
 // IsConnected returns as a boolean the status of the TCP connection
