@@ -16,7 +16,7 @@ func main() {
 		telemetry := gtjson.GTTelemetry{
 			PositionMeters: [3]float64{1.1, 2.2, 3.3},
 			Quaterion:      [4]float64{0, 0, 0, 1},
-			Euler:			[3]float64{10,15,20}
+			Euler:          [3]float64{10, 15, 20},
 			Timestamp:      12345,
 		}
 		clientInterface.SendTmToCore(telemetry)
