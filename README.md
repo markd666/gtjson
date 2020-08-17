@@ -22,3 +22,14 @@ or
 `cd example`
 `go build`
 `./example.exe`
+
+## Data Order
+
+GTTelemetry struct has four variables. Note the order of x/y/z, 
+
+```golang
+PositionMeters [4]float64  // [0] = x | [1] = y | [2] = z
+Quaterion      [4]float64  // [0] = w | [1] = x | [2] = y | [3] = z
+Euler          [3]float64  // [0] = yaw | [1] = pitch | [2] = 'roll'
+Timestamp      int64          // Unix Epoch time in milliseconds 
+```

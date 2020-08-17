@@ -72,7 +72,8 @@ func TestServerWrite(t *testing.T) {
 	if clientInterface.IsConnected() == true {
 		telemetry := GTTelemetry{
 			PositionMeters: [3]float64{1.1, 2.2, 3.3},
-			Quaterion:      [4]float64{0, 0, 0, 1},
+			Quaterion:      [4]float64{0.822, 0.022, 0.440, 0.360},
+			Euler:          [3]float64{30.0, 45.0, 60.0},
 			Timestamp:      1596103296,
 		}
 		clientInterface.SendTmToCore(telemetry)
@@ -105,12 +106,12 @@ func clientConnection(t *testing.T, wg *sync.WaitGroup) {
 
 		dataType := binary.BigEndian.Uint32(recvBuf[:4])
 		if dataType != 13 {
-			t.Fatalf("Incorrect data size")
+			t.Fatalf("Incorrect data type. Expected: 13. Actual: %v", dataType)
 		}
 
 		dataSize := binary.BigEndian.Uint32(recvBuf[4:8])
-		if dataSize != 91 {
-			t.Fatalf("Incorrect message type")
+		if dataSize != 141 {
+			t.Fatalf("Incorrect message size. Expected: 141. Actual: %v", dataSize)
 		}
 
 		var message GTTelemetry
