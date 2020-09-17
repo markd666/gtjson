@@ -1,1 +1,1 @@
-{"roverPosition":[1.1,2.2,3.3],"roverOrientation_quat":[0.822,0.022,0.44,0.36],"roverOrientation_euler":[30,45,60],"timeStamp_ms":1596103296}
+{"vtbPos_Vtr_m":[1.1,2.2,3.3],"q_rovAtt_VtrToVtb":[0.822,0.022,0.44,0.36],"e321_rovAtt_VtrToVtb":[30,45,60],"timeStamp_ms":1596103296}

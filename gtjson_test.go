@@ -110,7 +110,7 @@ func clientConnection(t *testing.T, wg *sync.WaitGroup) {
 		}
 
 		dataSize := binary.BigEndian.Uint32(recvBuf[4:8])
-		if dataSize != 141 {
+		if dataSize != 134 {
 			t.Fatalf("Incorrect message size. Expected: 141. Actual: %v", dataSize)
 		}
 
